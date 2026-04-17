@@ -45,11 +45,41 @@ body {
 </div>
 
 <script>
-const input = document.getElementById("textInput");
-const preview = document.getElementById("preview");
+document.addEventListener("DOMContentLoaded", () => {
 
-input.addEventListener("input", () => {
-    preview.textContent = input.value || "Preview Text";
+const textInput = document.getElementById("textInput");
+const preview = document.getElementById("preview");
+const textColor = document.getElementById("textColor");
+const bgColor = document.getElementById("bgColor");
+const transparentBg = document.getElementById("transparentBg");
+const fontSize = document.getElementById("fontSize");
+const sizeValue = document.getElementById("sizeValue");
+
+let customFontName = "MyCustomFont";
+
+function updatePreview() {
+    preview.textContent = textInput.value || "Preview Text";
+    preview.style.color = textColor.value;
+    preview.style.fontSize = fontSize.value + "px";
+    preview.style.fontFamily = customFontName;
+
+    sizeValue.textContent = fontSize.value;
+
+    if (transparentBg.checked) {
+        preview.style.background = "transparent";
+    } else {
+        preview.style.background = bgColor.value;
+    }
+}
+
+textInput.addEventListener("input", updatePreview);
+textColor.addEventListener("input", updatePreview);
+bgColor.addEventListener("input", updatePreview);
+transparentBg.addEventListener("change", updatePreview);
+fontSize.addEventListener("input", updatePreview);
+
+updatePreview();
+
 });
 </script>
 
