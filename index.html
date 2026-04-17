@@ -25,10 +25,20 @@ body {
     margin: auto;
 }
 
+input, button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+}
+
 #preview {
     margin-top: 20px;
     padding: 20px;
     border: 2px dashed #ccc;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: 'MyCustomFont', sans-serif;
 }
 </style>
@@ -39,9 +49,31 @@ body {
 <div class="container">
     <h2>Text to PNG Generator</h2>
 
-    <input type="text" id="textInput" placeholder="Enter text">
+    <!-- Text -->
+    <input type="text" id="textInput" placeholder="Enter your text">
 
+    <!-- Font Size -->
+    <p>Font Size: <span id="sizeValue">40</span>px</p>
+    <input type="range" id="fontSize" min="10" max="150" value="40">
+
+    <!-- Text Color -->
+    <p>Text Color</p>
+    <input type="color" id="textColor" value="#000000">
+
+    <!-- Background -->
+    <p>Background Color</p>
+    <input type="color" id="bgColor" value="#ffffff">
+
+    <!-- Transparent -->
+    <label>
+        <input type="checkbox" id="transparentBg"> Transparent Background
+    </label>
+
+    <!-- Preview -->
     <div id="preview">Preview Text</div>
+
+    <!-- Download -->
+    <button onclick="downloadPNG()">Download PNG</button>
 </div>
 
 <script>
@@ -79,6 +111,37 @@ transparentBg.addEventListener("change", updatePreview);
 fontSize.addEventListener("input", updatePreview);
 
 updatePreview();
+
+// PNG Download
+window.downloadPNG = async function() {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    const text = textInput.value || "Preview Text";
+    const size = parseInt(fontSize.value);
+
+    await document.fonts.load(size + "px " + customFontName);
+
+    ctx.font = size + "px " + customFontName;
+    const width = ctx.measureText(text).width;
+
+    canvas.width = width + 40;
+    canvas.height = size + 40;
+
+    if (!transparentBg.checked) {
+        ctx.fillStyle = bgColor.value;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    ctx.font = size + "px " + customFontName;
+    ctx.fillStyle = textColor.value;
+    ctx.fillText(text, 20, size);
+
+    const link = document.createElement("a");
+    link.download = "text.png";
+    link.href = canvas.toDataURL();
+    link.click();
+};
 
 });
 </script>
